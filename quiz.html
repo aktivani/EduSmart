@@ -1,24 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Quiz - EduSmart</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <title>EduSmart Quiz</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      color: #2c3e50;
+    }
+
+    .question {
+      margin-bottom: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <header>…same as index…</header>
-  <main class="container">
-    <h2>Test Your Knowledge</h2>
-    <form id="quizForm">
-      <p>1. What does HCI stand for?</p>
-      <label><input type="radio" name="q1" value="a"> Human Computer Interface</label><br/>
-      <label><input type="radio" name="q1" value="b"> Human Computer Interaction</label><br/>
-      <button type="submit">Submit</button>
-    </form>
-    <p id="result"></p>
-  </main>
-  <footer>…</footer>
-  <script src="js/script.js"></script>
+
+<header>
+  <h1>EduSmart Quiz</h1>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="quiz.html">Quiz</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <div class="quiz-container">
+    <h2>General Knowledge Quiz</h2>
+
+    <div class="question">
+      <p>1. What does HTML stand for?</p>
+      <input type="radio" name="q1" value="a" /> Hyper Trainer Marking Language<br />
+      <input type="radio" name="q1" value="b" /> Hyper Text Markup Language<br />
+      <input type="radio" name="q1" value="c" /> Hyperlink and Text Markup Language
+    </div>
+
+    <div class="question">
+      <p>2. Which of the following is a JavaScript framework?</p>
+      <input type="radio" name="q2" value="a" /> Django<br />
+      <input type="radio" name="q2" value="b" /> Flask<br />
+      <input type="radio" name="q2" value="c" /> React
+    </div>
+
+    <div class="question">
+      <p>3. What does CSS stand for?</p>
+      <input type="radio" name="q3" value="a" /> Cascading Style Sheets<br />
+      <input type="radio" name="q3" value="b" /> Colorful Style Sheets<br />
+      <input type="radio" name="q3" value="c" /> Computer Style System
+    </div>
+
+    <button onclick="checkAnswers()">Submit</button>
+    <div class="result" id="result"></div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 EduSmart. All rights reserved.</p>
+</footer>
+
+<script>
+  function checkAnswers() {
+    let score = 0;
+    if (document.querySelector('input[name="q1"]:checked')?.value === "b") score++;
+    if (document.querySelector('input[name="q2"]:checked')?.value === "c") score++;
+    if (document.querySelector('input[name="q3"]:checked')?.value === "a") score++;
+    document.getElementById("result").textContent = `You scored ${score} out of 3!`;
+  }
+</script>
+
 </body>
 </html>
