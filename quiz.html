@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edusmart Quizzes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Edusmart">
+            <h1>Edusmart</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li class="dropdown">
+                    <a href="#"><i class="fas fa-book"></i> Subjects <i class="fas fa-caret-down"></i></a>
+                    <div class="dropdown-content">
+                        <a href="resources.html?subject=math"><i class="fas fa-square-root-alt"></i> Math</a>
+                        <a href="resources.html?subject=science"><i class="fas fa-flask"></i> Science</a>
+                        <a href="resources.html?subject=history"><i class="fas fa-landmark"></i> History</a>
+                        <a href="resources.html?subject=english"><i class="fas fa-language"></i> English</a>
+                        <a href="resources.html?subject=geography"><i class="fas fa-globe-americas"></i> Geography</a>
+                    </div>
+                </li>
+                <li><a href="quiz.html" class="active"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                <li><a href="resources.html"><i class="fas fa-video"></i> Videos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="quiz-main">
+        <h2>Test Your Knowledge</h2>
+        
+        <div class="quiz-controls">
+            <select id="subject-select">
+                <option value="">Select a Subject</option>
+                <option value="math">Mathematics</option>
+                <option value="science">Science</option>
+                <option value="history">History</option>
+                <option value="english">English</option>
+                <option value="geography">Geography</option>
+            </select>
+            <button id="start-quiz" class="btn">Start Quiz</button>
+        </div>
+
+        <div class="quiz-container" id="quiz-container" style="display: none;">
+            <div class="quiz-header">
+                <span id="question-count">Question 1/10</span>
+                <span id="subject-name"></span>
+            </div>
+            
+            <div id="question">Loading question...</div>
+            
+            <div class="options" id="options">
+                <!-- Options will be added by JavaScript -->
+            </div>
+            
+            <button id="next-btn" class="btn" disabled>Next Question</button>
+        </div>
+
+        <!-- Quiz Result Popup -->
+        <div class="popup" id="result-popup">
+            <div class="popup-content">
+                <span class="close-popup">&times;</span>
+                <h3>Quiz Results</h3>
+                <div class="result-details">
+                    <p>Subject: <span id="result-subject"></span></p>
+                    <p>Score: <span id="result-score"></span>/10</p>
+                    <p id="result-message"></p>
+                    <div class="result-emoji"></div>
+                </div>
+                <button id="retake-btn" class="btn">Retake Quiz</button>
+                <button id="resources-btn" class="btn">View Resources</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
