@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const quizData = {
-        math: [
+    
+    const mobileMenuBtn = document.querySelector('.mobile-menu');
+    const nav = document.querySelector('nav');
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', function() {
+            nav.classList.toggle('show');
+        });
+    }
+
+    
+    if (document.querySelector('.quiz-main')) {
+        const quizData = {
+             math: [
             {
                 question: "What is the value of π (pi) rounded to two decimal places?",
                 options: ["3.14", "3.16", "3.12", "3.18"],
@@ -261,143 +272,268 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         ]
     };
-
-    let currentSubject = '';
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let questions = [];
-
-    const subjectSelect = document.getElementById('subject-select');
-    const startQuizBtn = document.getElementById('start-quiz');
-    const quizContainer = document.getElementById('quiz-container');
-    const questionCountSpan = document.getElementById('question-count');
-    const subjectNameSpan = document.getElementById('subject-name');
-    const questionElement = document.getElementById('question');
-    const optionsElement = document.getElementById('options');
-    const nextBtn = document.getElementById('next-btn');
-    const resultPopup = document.getElementById('result-popup');
-    const resultSubject = document.getElementById('result-subject');
-    const resultScore = document.getElementById('result-score');
-    const resultMessage = document.getElementById('result-message');
-    const retakeBtn = document.getElementById('retake-btn');
-    const resourcesBtn = document.getElementById('resources-btn');
-
-    startQuizBtn.addEventListener('click', startQuiz);
-    nextBtn.addEventListener('click', nextQuestion);
-    retakeBtn.addEventListener('click', retakeQuiz);
-    resourcesBtn.addEventListener('click', viewResources);
-
-    function startQuiz() {
-        currentSubject = subjectSelect.value;
-        if (!currentSubject) {
-            alert('Please select a subject first!');
-            return;
-        }
-
-        currentQuestionIndex = 0;
-        score = 0;
-        questions = [...quizData[currentSubject]];
         
-        quizContainer.style.display = 'block';
-        
-        const subjectNames = {
-            math: "Mathematics",
-            science: "Science",
-            history: "History",
-            english: "English",
-            geography: "Geography"
-        };
-        subjectNameSpan.textContent = subjectNames[currentSubject];
-        
-        loadQuestion();
-    }
 
-    function loadQuestion() {
-        questionCountSpan.textContent = `Question ${currentQuestionIndex + 1}/10`;
-        
-        const currentQuestion = questions[currentQuestionIndex];
-        questionElement.textContent = currentQuestion.question;
-        
-        optionsElement.innerHTML = '';
-        
-        currentQuestion.options.forEach(option => {
-            const button = document.createElement('button');
-            button.textContent = option;
-            button.classList.add('option-btn');
-            button.addEventListener('click', () => selectOption(option));
-            optionsElement.appendChild(button);
-        });
-        
-        nextBtn.disabled = true;
-    }
+        const subjectSelect = document.getElementById('subject-select');
+        const startQuizBtn = document.getElementById('start-quiz');
+        const quizContainer = document.getElementById('quiz-container');
+        const questionElement = document.getElementById('question');
+        const optionsContainer = document.getElementById('options');
+        const nextButton = document.getElementById('next-btn');
+        const questionCountElement = document.getElementById('question-count');
+        const subjectNameElement = document.getElementById('subject-name');
+        const resultPopup = document.getElementById('result-popup');
+        const resultSubject = document.getElementById('result-subject');
+        const resultScore = document.getElementById('result-score');
+        const resultMessage = document.getElementById('result-message');
+        const retakeBtn = document.getElementById('retake-btn');
+        const resourcesBtn = document.getElementById('resources-btn');
 
-    function selectOption(selectedOption) {
-        const optionButtons = document.querySelectorAll('.option-btn');
-        optionButtons.forEach(button => {
-            button.classList.remove('selected');
-            if (button.textContent === selectedOption) {
-                button.classList.add('selected');
+        let currentSubject = '';
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+
+        startQuizBtn.addEventListener('click', function() {
+            currentSubject = subjectSelect.value;
+            if (!currentSubject) {
+                alert('Please select a subject');
+                return;
             }
-        });
-        
-        nextBtn.disabled = false;
-    }
 
-    function nextQuestion() {
-        const selectedButton = document.querySelector('.option-btn.selected');
-        if (!selectedButton) return;
-        
-        const selectedAnswer = selectedButton.textContent;
-        const currentQuestion = questions[currentQuestionIndex];
-        
-        if (selectedAnswer === currentQuestion.answer) {
-            score++;
-        }
-        
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
+            subjectSelect.disabled = true;
+            startQuizBtn.disabled = true;
+            quizContainer.style.display = 'block';
+            subjectNameElement.textContent = subjectSelect.options[subjectSelect.selectedIndex].text;
+            currentQuestionIndex = 0;
+            score = 0;
             loadQuestion();
-        } else {
-            showResults();
+        });
+
+        function loadQuestion() {
+            const currentQuiz = quizData[currentSubject];
+            const question = currentQuiz[currentQuestionIndex];
+            
+            questionCountElement.textContent = `Question ${currentQuestionIndex + 1}/${currentQuiz.length}`;
+            questionElement.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('button');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', selectOption);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            nextButton.disabled = true;
         }
+
+        function selectOption(e) {
+            const options = document.querySelectorAll('.option');
+            options.forEach(option => option.classList.remove('selected'));
+            
+            selectedOption = parseInt(e.target.dataset.index);
+            e.target.classList.add('selected');
+            nextButton.disabled = false;
+        }
+
+        nextButton.addEventListener('click', function() {
+            const currentQuiz = quizData[currentSubject];
+            const question = currentQuiz[currentQuestionIndex];
+            
+            
+            const options = document.querySelectorAll('.option');
+            if (selectedOption === question.answer) {
+                score++;
+                options[selectedOption].classList.add('correct');
+            } else {
+                options[selectedOption].classList.add('incorrect');
+                options[question.answer].classList.add('correct');
+            }
+            
+            
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < currentQuiz.length) {
+                    loadQuestion();
+                    nextButton.disabled = true;
+                } else {
+                    showResults();
+                }
+            }, 1000);
+        });
+
+        function showResults() {
+            const subjectName = subjectSelect.options[subjectSelect.selectedIndex].text;
+            resultSubject.textContent = subjectName;
+            resultScore.textContent = `${score}/10`;
+            
+            const percentage = (score / 10) * 100;
+            if (percentage >= 80) {
+                resultMessage.textContent = 'Excellent! You have a strong understanding of this subject.';
+                document.querySelector('.result-emoji').textContent = '🎉';
+            } else if (percentage >= 50) {
+                resultMessage.textContent = 'Good job! With a bit more practice you can master this subject.';
+                document.querySelector('.result-emoji').textContent = '👍';
+            } else {
+                resultMessage.textContent = 'Keep practicing! Check out our resources to improve.';
+                document.querySelector('.result-emoji').textContent = '📚';
+            }
+            
+            resultPopup.style.display = 'flex';
+        }
+
+        retakeBtn.addEventListener('click', function() {
+            resultPopup.style.display = 'none';
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        });
+
+        resourcesBtn.addEventListener('click', function() {
+            window.location.href = `resources.html?subject=${currentSubject}`;
+        });
+
+        document.querySelector('.close-popup').addEventListener('click', function() {
+            resultPopup.style.display = 'none';
+        });
     }
 
-    function showResults() {
-        quizContainer.style.display = 'none';
-        
-        const subjectNames = {
-            math: "Mathematics",
-            science: "Science",
-            history: "History",
-            english: "English",
-            geography: "Geography"
+   
+    if (document.querySelector('.resources-main')) {
+        const resourceData = {
+            math: [
+                {
+                    title: "Algebra Basics",
+                    description: "Learn the fundamentals of algebra in this comprehensive video tutorial. Covers variables, equations, and basic operations with clear examples.",
+                    videoId: "ybkKvmYjW4I",
+                    duration: "12:34",
+                    level: "Beginner"
+                },
+                {
+                    title: "Geometry Explained",
+                    description: "Understand geometric concepts with visual examples. This video covers angles, shapes, and basic proofs in an easy-to-follow format.",
+                    videoId: "q6o8o9I4JQ8",
+                    duration: "15:20",
+                    level: "Intermediate"
+                }
+            ],
+            science: [
+                {
+                    title: "Chemistry Fundamentals",
+                    description: "Introduction to basic chemistry concepts including atoms, molecules, and chemical reactions. Perfect for beginners starting their science journey.",
+                    videoId: "FSyAehMdpyI",
+                    duration: "18:45",
+                    level: "Beginner"
+                },
+                {
+                    title: "Physics in Motion",
+                    description: "Explore the laws of motion and basic physics principles. This video uses real-world examples to explain complex concepts simply.",
+                    videoId: "u7lZMUf6Z4Y",
+                    duration: "22:10",
+                    level: "Intermediate"
+                }
+            ],
+            history: [
+                {
+                    title: "Ancient Civilizations",
+                    description: "Journey through time to explore ancient civilizations including Egypt, Greece, and Rome. Learn about their cultures and contributions.",
+                    videoId: "sohXPx_XZ6Y",
+                    duration: "25:30",
+                    level: "All Levels"
+                }
+            ],
+            english: [
+                {
+                    title: "Grammar Essentials",
+                    description: "Master English grammar with this comprehensive guide. Covers parts of speech, sentence structure, and common mistakes to avoid.",
+                    videoId: "8ZvF3qe3Xh4",
+                    duration: "20:15",
+                    level: "Beginner"
+                }
+            ],
+            geography: [
+                {
+                    title: "World Geography",
+                    description: "Explore the world's continents, countries, and physical features. This video provides a great overview of global geography concepts.",
+                    videoId: "vg5A0d1h5hQ",
+                    duration: "16:40",
+                    level: "All Levels"
+                }
+            ]
         };
-        
-        resultSubject.textContent = subjectNames[currentSubject];
-        resultScore.textContent = `${score}/10`;
-        
-        
-        if (score >= 8) {
-            resultMessage.textContent = "Excellent work! You really know your stuff!";
-        } else if (score >= 5) {
-            resultMessage.textContent = "Good job! With a bit more practice you'll be perfect!";
-        } else {
-            resultMessage.textContent = "Keep practicing! You'll get better with time!";
+
+        const subjectButtons = document.querySelectorAll('.subject-btn');
+        const resourcesContainer = document.getElementById('resources-container');
+        const urlParams = new URLSearchParams(window.location.search);
+        const subjectParam = urlParams.get('subject');
+
+        function loadResources(subject) {
+            resourcesContainer.innerHTML = '';
+            
+            let resourcesToShow = [];
+            if (subject === 'all' || !subject) {
+                
+                for (const sub in resourceData) {
+                    resourcesToShow = resourcesToShow.concat(resourceData[sub]);
+                }
+            } else {
+                resourcesToShow = resourceData[subject] || [];
+            }
+            
+            if (resourcesToShow.length === 0) {
+                resourcesContainer.innerHTML = '<p>No resources found for this subject.</p>';
+                return;
+            }
+            
+            resourcesToShow.forEach(resource => {
+                const resourceCard = document.createElement('div');
+                resourceCard.classList.add('resource-card');
+                
+                resourceCard.innerHTML = `
+                    <iframe src="https://www.youtube.com/embed/${resource.videoId}" 
+                            title="${resource.title}" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen></iframe>
+                    <div class="resource-info">
+                        <h3>${resource.title}</h3>
+                        <p>${resource.description}</p>
+                        <div class="resource-meta">
+                            <span>${resource.duration}</span>
+                            <span>${resource.level}</span>
+                        </div>
+                    </div>
+                `;
+                
+                resourcesContainer.appendChild(resourceCard);
+            });
         }
+
+       
+        if (subjectParam) {
+            document.querySelector(`.subject-btn[data-subject="${subjectParam}"]`).classList.add('active');
+            loadResources(subjectParam);
+        } else {
+            document.querySelector('.subject-btn[data-subject="all"]').classList.add('active');
+            loadResources('all');
+        }
+
         
-        resultPopup.style.display = 'block';
+        subjectButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                subjectButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const subject = this.dataset.subject;
+                loadResources(subject);
+            });
+        });
     }
-
-    function retakeQuiz() {
-        resultPopup.style.display = 'none';
-        startQuiz();
-    }
-
-    function viewResources() {
-        window.location.href = `resources.html?subject=${currentSubject}`;
-    }
-
-    document.querySelector('.close-popup').addEventListener('click', function() {
-        resultPopup.style.display = 'none';
-    });
 });
